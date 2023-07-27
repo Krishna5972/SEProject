@@ -128,7 +128,6 @@ def initialize_db():
         
     db.session.commit()
 
-initialize_db()
 
 @app.route('/')
 @app.route('/index')
