@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+{% extends "base.html" %} {% block title %} Parking Status {% endblock %} {%
+block content %}
+<div class="container">
+  <h2 class="my-4">Welcome to the Parking Reservation System</h2>
+  <p>Select a parking slot from the options below:</p>
+
+  <!-- Filter options -->
+  <div class="mb-4">
+    <form class="form-inline">
+      <div class="form-group">
+        <label for="filter_date" class="mr-2">Date</label>
+        <input
+          type="date"
+          class="form-control mr-4"
+          id="filter_date"
+          name="filter_date"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="filter_time" class="mr-2">Time</label>
+        <select class="form-control mr-4" id="filter_time" name="filter_time">
+          {% for i in range(24) %}
+          <option value="{{ '%02d:00' % i }}">{{ '%02d:00' % i }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+  </div>
+
+  <div class="mb-4">
+    <a href="/reserve" class="btn btn-primary float-right"
+      >Book a Reservation</a
+    >
+  </div>
+
+  <!-- Parking slots -->
+  <div class="row">
+    <!-- Occupied slots -->
+    <div class="col-4">
+      <h5>Occupied Slots</h5>
+      {% for slot in slots if slot.status == 'occupied' %}
+      <div class="slot occupied">Slot {{ slot.id }}</div>
+      {% endfor %}
+    </div>
+    <!-- Reserved slots -->
+    <div class="col-4">
+      <h5>Reserved Slots</h5>
+      {% for slot in slots if slot.status == 'reserved' %}
+      <div class="slot reserved">Slot {{ slot.id }}</div>
+      {% endfor %}
+    </div>
+    <!-- Empty slots -->
+    <div class="col-4">
+      <h5>Empty Slots</h5>
+      {% for slot in slots if slot.status == 'empty' %}
+      <div class="slot empty">Slot {{ slot.id }}</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .slot {
+    border: 1px solid black;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: center;
+  }
+  .occupied {
+    background-color: red;
+    color: white;
+  }
+  .reserved {
+    background-color: orange;
+    color: white;
+  }
+  .empty {
+    background-color: green;
+    color: white;
+  }
+</style>
+{% endblock %}

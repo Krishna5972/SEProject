@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+{% extends "base.html" %} {% block title %} Reserve a Slot {% endblock %} {%
+block content %}
+<div class="container">
+  <h2 class="my-4">Reserve a Parking Slot</h2>
+  <form method="POST" action="{{ url_for('reserve_slot') }}">
+    <div class="form-group">
+      <label for="slot">Parking Slot</label>
+      <select class="form-control half-width" id="slot" name="slot">
+        {% for slot in slots %}
+        <option value="{{ slot.id }}">Slot {{ slot.id }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="date">Date</label>
+      <input
+        type="date"
+        class="form-control half-width"
+        id="date"
+        name="date"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="start_time">Start Time</label>
+      <select class="form-control half-width" id="start_time" name="start_time">
+        {% for i in range(24) %}
+        <option value="{{ '%02d:00' % i }}">{{ '%02d:00' % i }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="end_time">End Time</label>
+      <select class="form-control half-width" id="end_time" name="end_time">
+        {% for i in range(24) %}
+        <option value="{{ '%02d:00' % i }}">{{ '%02d:00' % i }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="license_plate_number">License Plate Number</label>
+      <input
+        type="text"
+        class="form-control half-width"
+        id="license_plate_number"
+        name="license_plate_number"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="commercial">Commercial</label>
+      <select class="form-control half-width" id="commercial" name="commercial">
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+    </div>
+    <p class="lead" id="price_per_hour">Price per hour: $</p>
+    <p class="lead">Registration fee: $1.99</p>
+    <p class="lead" id="total_price_label">Total Price: $</p>
+    <button type="submit" class="btn btn-primary">Reserve</button>
+  </form>
+</div>
+
+<script>
+  const registrationFee = 1.99;
+  const commercialRate = 8.99;
+  const nonCommercialRate = 4.99;
+
+  function updateTotal() {
+    const startTime = parseInt(
+      document.getElementById("start_time").value.split(":")[0]
+    );
+    const endTime = parseInt(
+      document.getElementById("end_time").value.split(":")[0]
+    );
+    const hours =
+      endTime > startTime ? endTime - startTime : 24 - startTime + endTime;
+
+    let rate;
+    if (document.getElementById("commercial").value === "true") {
+      rate = commercialRate;
+    } else {
+      rate = nonCommercialRate;
+    }
+
+    const total = hours * rate + registrationFee;
+    document.getElementById("price_per_hour").textContent =
+      "Price per hour: $" + rate.toFixed(2);
+    document.getElementById("total_price_label").textContent =
+      "Total Price: $" + total.toFixed(2);
+  }
+
+  document.getElementById("start_time").addEventListener("change", updateTotal);
+  document.getElementById("end_time").addEventListener("change", updateTotal);
+  document.getElementById("commercial").addEventListener("change", updateTotal);
+
+  // Trigger change event to calculate the initial total price
+  window.onload = updateTotal;
+</script>
+
+{% endblock %}

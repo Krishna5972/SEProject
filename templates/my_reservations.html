@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+{% extends "base.html" %} {% block title %} My Reservations {% endblock %} {%
+block content %}
+<div class="container">
+  <h2 class="my-4">My Reservations</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Parking Slot</th>
+        <th scope="col">Date</th>
+        <th scope="col">Start Time</th>
+        <th scope="col">End Time</th>
+        <th scope="col">License Plate Number</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reservation in reservations %}
+      <tr>
+        <td>{{ reservation.slot.id }}</td>
+        <td>{{ reservation.date }}</td>
+        <td>{{ reservation.start_time }}</td>
+        <td>{{ reservation.end_time }}</td>
+        <td>{{ reservation.license_plate_number }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

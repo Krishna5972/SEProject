@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+{% extends "base.html" %} {% block title %} Home {% endblock %} {% block content
+%}
+<div class="container">
+  <h2 class="my-4">Welcome to the Parking Reservation System</h2>
+  <div class="mb-4">
+    <a href="/reserve" class="btn btn-primary">Book a Reservation</a>
+  </div>
+  <div class="row">
+    <div class="image-container">
+      <img
+        src="{{ url_for('static', filename='img/image2.jpg') }}"
+        alt="Image 2"
+      />
+      <p class="image-credit">
+        Image source:
+        <a
+          href="https://www.parkpca.com/help-improve-communities-with-first-rate-parking-management-services/"
+          target="_blank"
+          >ParkPCA</a
+        >
+      </p>
+    </div>
+
+    <style>
+      .image-container {
+        width: 100%;
+        text-align: center;
+      }
+
+      .image-credit {
+        font-size: 0.8em;
+        color: grey;
+      }
+    </style>
+
+    <p>
+      Our Parking Reservation System helps you save time by letting you reserve
+      parking slots in advance.
+    </p>
+
+    <p>Learn more about us <a href="/about_us">here</a>.</p>
+  </div>
+  {% endblock %}
+</div>
