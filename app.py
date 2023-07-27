@@ -416,4 +416,7 @@ def payment_gateway():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    with app.app_context():
+        # This ensures that the code inside the context will have access to the app
+        initialize_db()
+        app.run()
