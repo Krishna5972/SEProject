@@ -3,7 +3,7 @@
 block content %}
 <div class="container">
   <h2 class="my-4">Reserve a Parking Slot</h2>
-  <form method="POST" action="{{ url_for('reserve_slot') }}">
+  <form method="POST" action="{{ url_for('to_payment_gateway') }}">
     <div class="form-group">
       <label for="slot">Parking Slot</label>
       <select class="form-control half-width" id="slot" name="slot">
@@ -58,7 +58,7 @@ block content %}
     <p class="lead" id="price_per_hour">Price per hour: $</p>
     <p class="lead">Registration fee: $1.99</p>
     <p class="lead" id="total_price_label">Total Price: $</p>
-    <button type="submit" class="btn btn-primary">Reserve</button>
+    <button type="submit" class="btn btn-primary">Proceed to Payment</button>
   </form>
 </div>
 

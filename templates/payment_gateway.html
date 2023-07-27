@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% extends "base.html" %} {% block title %} Payment Gateway {% endblock %} {%
+block content %}
+<div class="container">
+  <h2 class="my-4">Payment Information</h2>
+  <p class="lead">
+    This is a dummy payment gateway. No real transactions will be made.
+  </p>
+  <p class="lead">Amount to pay: {{ amount_to_pay }}</p>
+  <form method="POST" action="{{ url_for('confirm_slot') }}">
+    <div class="form-group">
+      <label for="card_number">Card Number</label>
+      <input
+        type="text"
+        class="form-control"
+        id="card_number"
+        name="card_number"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="card_holder_name">Card Holder Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="card_holder_name"
+        name="card_holder_name"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="cvv">CVV</label>
+      <input
+        type="password"
+        class="form-control"
+        id="cvv"
+        name="cvv"
+        required
+      />
+    </div>
+    <button type="submit" class="btn btn-primary">Pay</button>
+  </form>
+</div>
+{% endblock %}

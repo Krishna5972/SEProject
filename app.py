@@ -249,11 +249,10 @@ def create_account():
     return render_template('create_account.html')
 
 
-@app.route('/my_reservations')
-@login_required
-def my_reservations():
-    reservations = Reservation.query.filter_by(user_id=current_user.id).all()
-    return render_template('my_reservations.html', reservations=reservations)
+
+
+    
+
 
 
 
@@ -274,6 +273,47 @@ def reserve_slot():
 
     license_plate_number = request.form.get('license_plate_number')
     commercial = request.form.get('commercial') == 'true'
+
+    session['reservation_details'] = {
+        'slot_id': slot_id,
+        'date': date_str,
+        'start_time': start_time_str,
+        'end_time': end_time_str,
+        'license_plate_number': license_plate_number,
+        'commercial': commercial
+    }
+
+    # Redirect to payment gateway page
+    return redirect(url_for('to_payment_gateway'))
+
+def get_reservations(user_id):
+    return Reservation.query.filter_by(user_id=user_id).all()
+
+@app.route('/my_reservations', methods=['GET'])
+@login_required
+def my_reservations():
+    reservations = get_reservations(current_user.id)
+    return render_template('my_reservations.html', reservations=reservations)
+
+@app.route('/confirm_slot', methods=['POST'])
+@login_required
+def confirm_slot():
+
+    reservation_details = session.get('reservation_details')
+
+    if reservation_details:
+        # Retrieve individual details from the session
+        slot_id = reservation_details.get('slot_id')
+        date_str = reservation_details.get('date')
+        start_time_str = reservation_details.get('start_time')
+        end_time_str = reservation_details.get('end_time')
+        license_plate_number = reservation_details.get('license_plate_number')
+        commercial = reservation_details.get('commercial')
+
+        # Convert date and time strings to date and time objects
+        date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        start_time = datetime.strptime(start_time_str, "%H:%M").time()
+        end_time = datetime.strptime(end_time_str, "%H:%M").time()
 
     # Create new reservation
     reservation = Reservation(
@@ -311,9 +351,65 @@ def reserve_slot():
     # Send the confirmation email
     send_reservation_confirmation(current_user.email, subject, content)
 
-    return redirect(url_for('my_reservations'))
+    reservations = Reservation.query.filter_by(user_id=current_user.id).all()
+    return render_template('my_reservations.html', reservations=reservations)
 
 
+@app.route('/to_payment_gateway', methods=['POST'])
+@login_required
+def to_payment_gateway():
+
+    print('here')
+    # Get form data
+    slot_id = request.form.get('slot')
+
+    date_str = request.form.get('date')
+    date = datetime.strptime(date_str, "%Y-%m-%d").date()  # Convert string to date
+
+    start_time_str = request.form.get('start_time')
+    start_time = datetime.strptime(start_time_str, "%H:%M").time()  # Convert string to time
+
+    end_time_str = request.form.get('end_time')
+    end_time = datetime.strptime(end_time_str, "%H:%M").time()  # Convert string to time
+
+    license_plate_number = request.form.get('license_plate_number')
+    commercial = request.form.get('commercial') == 'true'
+
+    registration_fee = 1.99
+    commercial_rate = 8.99
+    non_commercial_rate = 4.99
+
+    # Calculate hours
+    hours = (datetime.combine(date, end_time) - datetime.combine(date, start_time)).seconds / 3600
+
+    # Determine rate
+    rate = commercial_rate if commercial else non_commercial_rate
+
+    # Calculate total cost
+    amount_to_pay = hours * rate + registration_fee
+
+    # Store reservation details in session
+    session['reservation_details'] = {
+        'slot_id': slot_id,
+        'date': date_str,
+        'start_time': start_time_str,
+        'end_time': end_time_str,
+        'license_plate_number': license_plate_number,
+        'commercial': commercial,
+        'amount_to_pay': amount_to_pay
+    }
+
+    # Redirect to payment gateway page
+    return redirect(url_for('payment_gateway'))
+
+@app.route('/payment_gateway', methods=['GET'])
+@login_required
+def payment_gateway():
+    reservation_details = session.get('reservation_details')
+    if reservation_details is None:
+        return redirect(url_for('error_page')) 
+
+    return render_template('payment_gateway.html', amount_to_pay=reservation_details['amount_to_pay'])
 
 
 
