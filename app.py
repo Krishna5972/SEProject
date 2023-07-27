@@ -12,7 +12,7 @@ from mail_service import *
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SECRET_KEY'] = os.urandom(16).hex()
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', default=os.urandom(16).hex())
 db = SQLAlchemy(app)
 
 
@@ -231,6 +231,7 @@ def create_account():
         # Check if username or email already exists
         user = User.query.filter((User.username == username) | (User.email == email)).first()
         if user:
+            print('Username or email already exists.')
             flash('Username or email already exists.')
             return redirect(url_for('create_account'))
 
@@ -245,7 +246,7 @@ def create_account():
         flash('Account created successfully. You can now log in.')
         return redirect(url_for('login'))
 
-    return render_template('create_account.html')
+    return render_template('account_creation.html')
 
 
 
